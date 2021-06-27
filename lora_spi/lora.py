@@ -70,7 +70,7 @@ class LoRa:
         self._implicit = kw.get('implicit', False)
         self.set_implicit(self._implicit)
         self.set_sync_word(kw.get('sync_word', 0x12))
-        self._on_recv = kw.get('on_recv', None)
+        self._on_recv = kw.get('on_recv')
         self._write(REG_FIFO_TX_BASE_ADDR, TX_BASE_ADDR)
         self._write(REG_FIFO_RX_BASE_ADDR, RX_BASE_ADDR)
         self.standby()
