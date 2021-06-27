@@ -14,10 +14,10 @@ sensor = mlx90614.MLX90614(i2c_Mlx)
 
 
 while True:
-    if sensor.read_ambient_temp()<100 and sensor.read_object_temp()<100:
-        ambient=str(sensor.read_ambient_temp())
-        
-    object=str(sensor.read_ambient_temp())
+    if sensor.read_ambient_temp() < 100 and sensor.read_object_temp() < 100:
+        ambient = str(sensor.read_ambient_temp())
+
+    object = str(sensor.read_ambient_temp())
     # print(sensor.read_ambient_temp())
     # print(sensor.read_object_temp())
     lcd.clear()

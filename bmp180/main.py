@@ -4,7 +4,7 @@ from bmp085 import BMP180
 
 import utime as time
 from machine import I2C
-i2c = I2C(id=1,scl=Pin(27),sda=Pin(26),freq=100000)
+i2c = I2C(id=1, scl=Pin(27), sda=Pin(26), freq=100000)
 
 bmp = BMP180(i2c)
 bmp.oversample = 2
@@ -16,5 +16,5 @@ while True:
     altitude = bmp.altitude
     print("Temp: "+str(temp))
     print("pressure: "+str(p))
-    print("altitude "+ str(altitude))
+    print("altitude " + str(altitude))
     time.sleep(1)

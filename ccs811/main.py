@@ -4,8 +4,8 @@ from ccs811 import CCS811
 
 led = Pin(25, Pin.OUT)
 
-i2c = I2C(id=1,scl=Pin(27), sda=Pin(26),freq=100000)
-    # Adafruit sensor breakout has i2c addr: 90; Sparkfun: 91
+i2c = I2C(id=1, scl=Pin(27), sda=Pin(26), freq=100000)
+# Adafruit sensor breakout has i2c addr: 90; Sparkfun: 91
 s = CCS811(i2c=i2c, addr=91)
 
 while True:

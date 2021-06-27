@@ -9,6 +9,7 @@ class BMP085():
     Module for the BMP085 pressure sensor.
     '''
     # init
+
     def __init__(self, i2c=None):
         # internal module defines
         if i2c is None:

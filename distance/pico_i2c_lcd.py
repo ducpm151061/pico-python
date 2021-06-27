@@ -57,10 +57,12 @@ class I2cLcd(LcdApi):
         """Writes a command to the LCD.
         Data is latched on the falling edge of E.
         """
-        byte = ((self.backlight << SHIFT_BACKLIGHT) | (((cmd >> 4) & 0x0f) << SHIFT_DATA))
+        byte = ((self.backlight << SHIFT_BACKLIGHT) |
+                (((cmd >> 4) & 0x0f) << SHIFT_DATA))
         self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
         self.i2c.writeto(self.i2c_addr, bytearray([byte]))
-        byte = ((self.backlight << SHIFT_BACKLIGHT) | ((cmd & 0x0f) << SHIFT_DATA))
+        byte = ((self.backlight << SHIFT_BACKLIGHT)
+                | ((cmd & 0x0f) << SHIFT_DATA))
         self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
         self.i2c.writeto(self.i2c_addr, bytearray([byte]))
         if cmd <= 3:
@@ -69,9 +71,11 @@ class I2cLcd(LcdApi):
 
     def hal_write_data(self, data):
         """Write data to the LCD."""
-        byte = (MASK_RS | (self.backlight << SHIFT_BACKLIGHT) | (((data >> 4) & 0x0f) << SHIFT_DATA))
+        byte = (MASK_RS | (self.backlight << SHIFT_BACKLIGHT)
+                | (((data >> 4) & 0x0f) << SHIFT_DATA))
         self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
         self.i2c.writeto(self.i2c_addr, bytearray([byte]))
-        byte = (MASK_RS | (self.backlight << SHIFT_BACKLIGHT) | ((data & 0x0f) << SHIFT_DATA))
+        byte = (MASK_RS | (self.backlight << SHIFT_BACKLIGHT)
+                | ((data & 0x0f) << SHIFT_DATA))
         self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
         self.i2c.writeto(self.i2c_addr, bytearray([byte]))

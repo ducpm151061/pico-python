@@ -10,9 +10,9 @@ uart = UART(1, 9600, tx=Pin(4), rx=Pin(5))
 while True:
     rxData = bytes()
     # while uart.any() > 0:
-    if uart.any()>0:
-        rxData=uart.read()
-        if rxData.decode('utf-8')=='Gui':
+    if uart.any() > 0:
+        rxData = uart.read()
+        if rxData.decode('utf-8') == 'Gui':
             uart.write("Phung Minh Duc")
             led.value(1)
             time.sleep(1)
