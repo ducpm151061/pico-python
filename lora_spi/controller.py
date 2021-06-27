@@ -65,7 +65,8 @@ class Controller:
         return transceiver
 
 
-    def prepare_pin(self, pin_id, in_out = None):
+    @staticmethod
+    def prepare_pin(pin_id, in_out = None):
         reason = '''
             # a pin should provide:
             # .pin_id
@@ -77,7 +78,8 @@ class Controller:
         raise NotImplementedError(reason)
 
 
-    def prepare_irq_pin(self, pin_id):
+    @staticmethod
+    def prepare_irq_pin(pin_id):
         reason = '''
             # a irq_pin should provide:
             # .set_handler_for_irq_on_rising_edge()  # to set trigger and handler.
@@ -86,14 +88,16 @@ class Controller:
         raise NotImplementedError(reason)
 
 
-    def get_spi(self):
+    @staticmethod
+    def get_spi():
         reason = '''
             # initialize SPI interface 
         '''
         raise NotImplementedError(reason)
 
 
-    def prepare_spi(self, spi):
+    @staticmethod
+    def prepare_spi(spi):
         reason = '''
             # a spi should provide: 
             # .close()
@@ -114,7 +118,8 @@ class Controller:
             sleep(off_seconds)
 
 
-    def reset_pin(self, pin, duration_low = 0.05, duration_high = 0.05):
+    @staticmethod
+    def reset_pin(pin, duration_low = 0.05, duration_high = 0.05):
         pin.low()
         sleep(duration_low)
         pin.high()

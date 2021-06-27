@@ -29,13 +29,16 @@ class KalmanFilter:
 
         return _current_estimate
 
-    def setMeasurementError(self, mea_e):
+    @staticmethod
+    def setMeasurementError(mea_e):
         _err_measure = mea_e
 
-    def setEstimateError(self, est_e):
+    @staticmethod
+    def setEstimateError(est_e):
         _err_estimate = est_e
 
-    def setProcessNoise(self, q):
+    @staticmethod
+    def setProcessNoise(q):
         _q = q
 
     def getKalmanGain(self):
