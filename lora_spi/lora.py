@@ -47,6 +47,7 @@ IRQ_PAYLOAD_CRC_ERROR_MASK = 0x20
 
 MAX_PKT_LENGTH = 255
 
+
 class LoRa:
 
     def __init__(self, spi, **kw):
@@ -178,7 +179,7 @@ class LoRa:
         self._write(REG_MODEM_CONFIG_2, config)
 
     def set_sync_word(self, sw):
-        self._write(REG_SYNC_WORD, sw) 
+        self._write(REG_SYNC_WORD, sw)
 
     def set_implicit(self, implicit=False):
         if self._implicit != implicit:
@@ -200,7 +201,7 @@ class LoRa:
                 self.rx.irq(handler=None, trigger=0)
 
     def recv(self):
-        self._write(REG_OP_MODE, MODE_LORA | MODE_RX_CONTINUOUS) 
+        self._write(REG_OP_MODE, MODE_LORA | MODE_RX_CONTINUOUS)
 
     def _irq_recv(self, event_source):
         f = self._get_irq_flags()
@@ -229,7 +230,7 @@ class LoRa:
         return resp
 
     def _read(self, addr):
-        x = self._transfer(addr & 0x7f) 
+        x = self._transfer(addr & 0x7f)
         return int.from_bytes(x, 'big')
 
     def _write(self, addr, x):
