@@ -273,7 +273,6 @@ class ILI9341:
         self._write(_VSCRSADD, ustruct.pack(">H", self._scroll))
 
     def next_line(self, cury, char_h):
-        global scrolling
         if not self.scrolling:
             res = cury + char_h
             self.scrolling = (res >= self.height)
