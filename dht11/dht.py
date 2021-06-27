@@ -93,7 +93,8 @@ class DHT11:
             )
         return transitions[4:]
 
-    def _convert_pulses_to_buffer(self, pulses):
+    @staticmethod
+    def _convert_pulses_to_buffer(pulses):
         """Convert a list of 80 pulses into a 5 byte buffer
         The resulting 5 bytes in the buffer will be:
             0: Integral relative humidity data
@@ -113,7 +114,8 @@ class DHT11:
             buffer.append(binary >> shift * 8 & 0xFF)
         return buffer
 
-    def _verify_checksum(self, buffer):
+    @staticmethod
+    def _verify_checksum(buffer):
         # Calculate checksum
         checksum = 0
         for buf in buffer[0:4]:

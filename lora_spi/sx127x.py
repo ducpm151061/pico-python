@@ -392,5 +392,6 @@ class SX127x:
         if self.IS_MICROPYTHON():
             print('[Memory - free: {}   allocated: {}]'.format(gc.mem_free(), gc.mem_alloc()))
     
-    def IS_MICROPYTHON(self):
+    @staticmethod
+    def IS_MICROPYTHON():
         return (implementation.name == 'micropython')
