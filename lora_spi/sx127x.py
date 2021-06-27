@@ -337,7 +337,7 @@ class SX127x:
             # automatically standby when RX_DONE
             return True
 
-        elif self.readRegister(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE):
+        if self.readRegister(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE):
             # no packet received.
             # reset FIFO address / # enter single RX mode
             self.writeRegister(REG_FIFO_ADDR_PTR, FifoRxBaseAddr)
