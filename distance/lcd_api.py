@@ -1,5 +1,6 @@
 import time
 
+
 class LcdApi:
 
     LCD_CLR = 0x01              # DB0: clear display
@@ -183,6 +184,7 @@ class LcdApi:
         """
         raise NotImplementedError
 
-    def hal_sleep_us(self, usecs):
+    @staticmethod
+    def hal_sleep_us(usecs):
         """Sleep for some time (given in microseconds)."""
         time.sleep_us(usecs)

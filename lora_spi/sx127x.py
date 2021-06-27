@@ -63,7 +63,6 @@ IRQ_RX_TIME_OUT_MASK = 0x80
 MAX_PKT_LENGTH = 255
 
 
-
 class SX127x:
 
     # The controller can be ESP8266, ESP32, Raspberry Pi, or a PC.
@@ -71,24 +70,23 @@ class SX127x:
     # 1. a SPI, with transfer function.
     # 2. a reset pin, with low(), high() functions.
     # 3. IRQ pinS , to be triggered by RFM96W's DIO0~5 pins. These pins each has two functions:
-    #   3.1 set_handler_for_irq_on_rising_edge() 
+    #   3.1 set_handler_for_irq_on_rising_edge()
     #   3.2 detach_irq()
-    # 4. a function to blink on-board LED. 
+    # 4. a function to blink on-board LED.
 
     def __init__(self,
-                 name = 'SX127x',
-                 parameters = {'frequency'       : 434E6, 'tx_power_level': 2, 'signal_bandwidth': 62.5E3,
-                               'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
-                               'implicitHeader'  : False, 'sync_word': 0x12, 'enable_CRC': False},
-                 onReceive = None):
+                 name='SX127x',
+                 parameters={'frequency': 434E6, 'tx_power_level': 2, 'signal_bandwidth': 62.5E3,
+                             'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
+                             'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False},
+                 onReceive=None):
 
         self.name = name
         self.parameters = parameters
         self._onReceive = onReceive
         self._lock = False
 
-
-    def init(self, parameters = None):
+    def init(self, parameters=None):
         if parameters:
             self.parameters = parameters
 
@@ -122,7 +120,8 @@ class SX127x:
         # set LowDataRateOptimize flag if symbol time > 16ms (default disable on reset)
         # self.writeRegister(REG_MODEM_CONFIG_3, self.readRegister(REG_MODEM_CONFIG_3) & 0xF7)  # default disable on reset
         if 1000 / (self.parameters['signal_bandwidth'] / 2 ** self.parameters['spreading_factor']) > 16:
-            self.writeRegister(REG_MODEM_CONFIG_3, self.readRegister(REG_MODEM_CONFIG_3) | 0x08)
+            self.writeRegister(REG_MODEM_CONFIG_3,
+                               self.readRegister(REG_MODEM_CONFIG_3) | 0x08)
 
         # set base addresses
         self.writeRegister(REG_FIFO_TX_BASE_ADDR, FifoTxBaseAddr)
@@ -130,15 +129,13 @@ class SX127x:
 
         self.standby()
 
-
-    def beginPacket(self, implicitHeaderMode = False):
+    def beginPacket(self, implicitHeaderMode=False):
         self.standby()
         self.implicitHeaderMode(implicitHeaderMode)
 
-        # reset FIFO address and paload length 
+        # reset FIFO address and paload length
         self.writeRegister(REG_FIFO_ADDR_PTR, FifoTxBaseAddr)
         self.writeRegister(REG_PAYLOAD_LENGTH, 0)
-
 
     def endPacket(self):
         # put in TX mode
@@ -153,7 +150,6 @@ class SX127x:
 
         self.collect_garbage()
 
-
     def write(self, buffer):
         currentLength = self.readRegister(REG_PAYLOAD_LENGTH)
         size = len(buffer)
@@ -165,12 +161,11 @@ class SX127x:
         for i in range(size):
             self.writeRegister(REG_FIFO, buffer[i])
 
-        # update length        
+        # update length
         self.writeRegister(REG_PAYLOAD_LENGTH, currentLength + size)
         return size
 
-
-    def aquire_lock(self, lock = False):
+    def aquire_lock(self, lock=False):
         if not self.IS_MICROPYTHON():  # MicroPython is single threaded, doesn't need lock.
             if lock:
                 while self._lock:
@@ -179,8 +174,7 @@ class SX127x:
             else:
                 self._lock = False
 
-
-    def println(self, string, implicitHeader = False):
+    def println(self, string, implicitHeader=False):
         self.aquire_lock(True)  # wait until RX_Done, lock and begin writing.
 
         self.beginPacket(implicitHeader)
@@ -189,40 +183,33 @@ class SX127x:
 
         self.aquire_lock(False)  # unlock when done writing
 
-
     def getIrqFlags(self):
         irqFlags = self.readRegister(REG_IRQ_FLAGS)
         self.writeRegister(REG_IRQ_FLAGS, irqFlags)
         return irqFlags
 
-
     def packetRssi(self):
         return (self.readRegister(REG_PKT_RSSI_VALUE) - (164 if self._frequency < 868E6 else 157))
-
 
     def packetSnr(self):
         return (self.readRegister(REG_PKT_SNR_VALUE)) * 0.25
 
-
     def standby(self):
         self.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY)
-
 
     def sleep(self):
         self.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP)
 
-
-    def setTxPower(self, level, outputPin = PA_OUTPUT_PA_BOOST_PIN):
+    def setTxPower(self, level, outputPin=PA_OUTPUT_PA_BOOST_PIN):
         if (outputPin == PA_OUTPUT_RFO_PIN):
             # RFO
             level = min(max(level, 0), 14)
             self.writeRegister(REG_PA_CONFIG, 0x70 | level)
 
         else:
-            # PA BOOST                
+            # PA BOOST
             level = min(max(level, 2), 17)
             self.writeRegister(REG_PA_CONFIG, PA_BOOST | (level - 2))
-
 
     def setFrequency(self, frequency):
         self._frequency = frequency
@@ -238,16 +225,16 @@ class SX127x:
         self.writeRegister(REG_FRF_MID, frfs[frequency][1])
         self.writeRegister(REG_FRF_LSB, frfs[frequency][2])
 
-
     def setSpreadingFactor(self, sf):
         sf = min(max(sf, 6), 12)
         self.writeRegister(REG_DETECTION_OPTIMIZE, 0xc5 if sf == 6 else 0xc3)
         self.writeRegister(REG_DETECTION_THRESHOLD, 0x0c if sf == 6 else 0x0a)
-        self.writeRegister(REG_MODEM_CONFIG_2, (self.readRegister(REG_MODEM_CONFIG_2) & 0x0f) | ((sf << 4) & 0xf0))
-
+        self.writeRegister(REG_MODEM_CONFIG_2, (self.readRegister(
+            REG_MODEM_CONFIG_2) & 0x0f) | ((sf << 4) & 0xf0))
 
     def setSignalBandwidth(self, sbw):
-        bins = (7.8E3, 10.4E3, 15.6E3, 20.8E3, 31.25E3, 41.7E3, 62.5E3, 125E3, 250E3)
+        bins = (7.8E3, 10.4E3, 15.6E3, 20.8E3,
+                31.25E3, 41.7E3, 62.5E3, 125E3, 250E3)
 
         bw = 9
         for i in range(len(bins)):
@@ -257,25 +244,23 @@ class SX127x:
 
         # bw = bins.index(sbw)
 
-        self.writeRegister(REG_MODEM_CONFIG_1, (self.readRegister(REG_MODEM_CONFIG_1) & 0x0f) | (bw << 4))
-
+        self.writeRegister(REG_MODEM_CONFIG_1, (self.readRegister(
+            REG_MODEM_CONFIG_1) & 0x0f) | (bw << 4))
 
     def setCodingRate(self, denominator):
         denominator = min(max(denominator, 5), 8)
         cr = denominator - 4
-        self.writeRegister(REG_MODEM_CONFIG_1, (self.readRegister(REG_MODEM_CONFIG_1) & 0xf1) | (cr << 1))
-
+        self.writeRegister(REG_MODEM_CONFIG_1, (self.readRegister(
+            REG_MODEM_CONFIG_1) & 0xf1) | (cr << 1))
 
     def setPreambleLength(self, length):
         self.writeRegister(REG_PREAMBLE_MSB, (length >> 8) & 0xff)
         self.writeRegister(REG_PREAMBLE_LSB, (length >> 0) & 0xff)
 
-
-    def enableCRC(self, enable_CRC = False):
+    def enableCRC(self, enable_CRC=False):
         modem_config_2 = self.readRegister(REG_MODEM_CONFIG_2)
         config = modem_config_2 | 0x04 if enable_CRC else modem_config_2 & 0xfb
         self.writeRegister(REG_MODEM_CONFIG_2, config)
-
 
     def setSyncWord(self, sw):
         self.writeRegister(REG_SYNC_WORD, sw)
@@ -286,18 +271,16 @@ class SX127x:
         # else:
         # self.writeRegister(REG_IRQ_FLAGS_MASK, self.readRegister(REG_IRQ_FLAGS_MASK) | IRQ_RX_DONE_MASK)
 
-
     # def dumpRegisters(self):
     # for i in range(128):
     # print("0x{0:02x}: {1:02x}".format(i, self.readRegister(i)))
 
-    def implicitHeaderMode(self, implicitHeaderMode = False):
+    def implicitHeaderMode(self, implicitHeaderMode=False):
         if self._implicitHeaderMode != implicitHeaderMode:  # set value only if different.
             self._implicitHeaderMode = implicitHeaderMode
             modem_config_1 = self.readRegister(REG_MODEM_CONFIG_1)
             config = modem_config_1 | 0x01 if implicitHeaderMode else modem_config_1 & 0xfe
             self.writeRegister(REG_MODEM_CONFIG_1, config)
-
 
     def onReceive(self, callback):
         self._onReceive = callback
@@ -305,26 +288,27 @@ class SX127x:
         if self.pin_RxDone:
             if callback:
                 self.writeRegister(REG_DIO_MAPPING_1, 0x00)
-                self.pin_RxDone.set_handler_for_irq_on_rising_edge(handler = self.handleOnReceive)
+                self.pin_RxDone.set_handler_for_irq_on_rising_edge(
+                    handler=self.handleOnReceive)
             else:
                 self.pin_RxDone.detach_irq()
 
-
-    def receive(self, size = 0):
+    def receive(self, size=0):
         self.implicitHeaderMode(size > 0)
         if size > 0:
             self.writeRegister(REG_PAYLOAD_LENGTH, size & 0xff)
 
         # The last packet always starts at FIFO_RX_CURRENT_ADDR
         # no need to reset FIFO_ADDR_PTR
-        self.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS)
+        self.writeRegister(
+            REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS)
 
         # on RPi, interrupt callback is threaded and racing with main thread,
-
 
     # Needs a lock for accessing FIFO.
     # https://sourceforge.net/p/raspberry-gpio-python/wiki/Inputs/
     # http://raspi.tv/2013/how-to-use-interrupts-with-python-on-the-raspberry-pi-and-rpi-gpio-part-2
+
     def handleOnReceive(self, event_source):
         self.aquire_lock(True)  # lock until TX_Done
 
@@ -338,8 +322,7 @@ class SX127x:
 
         self.aquire_lock(False)  # unlock in any case.
 
-
-    def receivedPacket(self, size = 0):
+    def receivedPacket(self, size=0):
         irqFlags = self.getIrqFlags()
 
         self.implicitHeaderMode(size > 0)
@@ -355,16 +338,17 @@ class SX127x:
             return True
 
         elif self.readRegister(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE):
-            # no packet received.            
+            # no packet received.
             # reset FIFO address / # enter single RX mode
             self.writeRegister(REG_FIFO_ADDR_PTR, FifoRxBaseAddr)
-            self.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)
-
+            self.writeRegister(
+                REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)
 
     def read_payload(self):
         # set FIFO address to current RX address
         # fifo_rx_current_addr = self.readRegister(REG_FIFO_RX_CURRENT_ADDR)
-        self.writeRegister(REG_FIFO_ADDR_PTR, self.readRegister(REG_FIFO_RX_CURRENT_ADDR))
+        self.writeRegister(REG_FIFO_ADDR_PTR,
+                           self.readRegister(REG_FIFO_RX_CURRENT_ADDR))
 
         # read packet length
         packetLength = self.readRegister(REG_PAYLOAD_LENGTH) if self._implicitHeaderMode else \
@@ -377,20 +361,19 @@ class SX127x:
         self.collect_garbage()
         return bytes(payload)
 
-
-    def readRegister(self, address, byteorder = 'big', signed = False):
+    def readRegister(self, address, byteorder='big', signed=False):
         response = self.transfer(self.pin_ss, address & 0x7f)
         return int.from_bytes(response, byteorder)
-
 
     def writeRegister(self, address, value):
         self.transfer(self.pin_ss, address | 0x80, value)
 
-
     def collect_garbage(self):
         gc.collect()
         if self.IS_MICROPYTHON():
-            print('[Memory - free: {}   allocated: {}]'.format(gc.mem_free(), gc.mem_alloc()))
-    
-    def IS_MICROPYTHON(self):
+            print(
+                '[Memory - free: {}   allocated: {}]'.format(gc.mem_free(), gc.mem_alloc()))
+
+    @staticmethod
+    def IS_MICROPYTHON():
         return (implementation.name == 'micropython')

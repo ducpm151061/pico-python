@@ -4,16 +4,20 @@ import utime
 from machine import Pin
 from micropython import const
 
+
 class InvalidChecksum(Exception):
     pass
 
+
 class InvalidPulseCount(Exception):
     pass
+
 
 MAX_UNCHANGED = const(100)
 MIN_INTERVAL_US = const(200000)
 HIGH_LEVEL = const(50)
 EXPECTED_PULSES = const(84)
+
 
 class DHT11:
     _temperature: float
@@ -93,7 +97,8 @@ class DHT11:
             )
         return transitions[4:]
 
-    def _convert_pulses_to_buffer(self, pulses):
+    @staticmethod
+    def _convert_pulses_to_buffer(pulses):
         """Convert a list of 80 pulses into a 5 byte buffer
         The resulting 5 bytes in the buffer will be:
             0: Integral relative humidity data
@@ -113,7 +118,8 @@ class DHT11:
             buffer.append(binary >> shift * 8 & 0xFF)
         return buffer
 
-    def _verify_checksum(self, buffer):
+    @staticmethod
+    def _verify_checksum(buffer):
         # Calculate checksum
         checksum = 0
         for buf in buffer[0:4]:
