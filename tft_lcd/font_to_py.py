@@ -498,20 +498,20 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     if not args.infile[0].isalpha():
-        quit('Font filenames must be valid Python variable names.')
+        sys.exit('Font filenames must be valid Python variable names.')
 
     if not os.path.isfile(args.infile):
-        quit("Font filename does not exist")
+        sys.exit("Font filename does not exist")
 
     if not os.path.splitext(args.infile)[1].upper() in ('.TTF', '.OTF'):
-        quit("Font file should be a ttf or otf file.")
+        sys.exit("Font file should be a ttf or otf file.")
 
     if args.binary:
         if os.path.splitext(args.outfile)[1].upper() == '.PY':
-            quit('Binary file must not have a .py extension.')
+            sys.exit('Binary file must not have a .py extension.')
 
         if args.smallest != 32 or args.largest != 126 or args.errchar != ord('?'):
-            quit(BINARY)
+            sys.exit(BINARY)
 
         print('Writing binary font file.')
         if not write_binary_font(args.outfile, args.infile, args.height,
@@ -519,16 +519,16 @@ if __name__ == "__main__":
             sys.exit(1)
     else:
         if not os.path.splitext(args.outfile)[1].upper() == '.PY':
-            quit('Output filename must have a .py extension.')
+            sys.exit('Output filename must have a .py extension.')
 
         if args.smallest < 0:
-            quit('--smallest must be >= 0')
+            sys.exit('--smallest must be >= 0')
 
         if args.largest > 255:
-            quit('--largest must be < 256')
+            sys.exit('--largest must be < 256')
 
         if args.errchar < 0 or args.errchar > 255:
-            quit('--errchar must be between 0 and 255')
+            sys.exit('--errchar must be between 0 and 255')
 
         print('Writing Python font file.')
         if not write_font(args.outfile, args.infile, args.height, args.fixed,
