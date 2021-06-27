@@ -4,16 +4,20 @@ import utime
 from machine import Pin
 from micropython import const
 
+
 class InvalidChecksum(Exception):
     pass
 
+
 class InvalidPulseCount(Exception):
     pass
+
 
 MAX_UNCHANGED = const(100)
 MIN_INTERVAL_US = const(200000)
 HIGH_LEVEL = const(50)
 EXPECTED_PULSES = const(84)
+
 
 class DHT11:
     _temperature: float
