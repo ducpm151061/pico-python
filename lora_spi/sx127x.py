@@ -80,8 +80,8 @@ class SX127x:
                  onReceive=None):
         if parameters is None:
             parameters = {'frequency': 434E6, 'tx_power_level': 2, 'signal_bandwidth': 62.5E3,
-                                     'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
-                                     'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False}
+                          'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
+                          'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False}
 
         self.name = name
         self.parameters = parameters
