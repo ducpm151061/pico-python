@@ -51,8 +51,7 @@ class CCS811(object):
             self.eCO2 = ((co2HB << 8) | co2LB)
             self.tVOC = ((tVOCHB << 8) | tVOCLB)
             return True
-        else:
-            return False
+        return False
 
     def get_baseline(self):
         register = self.i2c.readfrom_mem(self.addr, 0x11, 2)

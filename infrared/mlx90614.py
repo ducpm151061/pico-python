@@ -22,9 +22,8 @@ class SensorBase:
 
 	def read_object2_temp(self):
 		if self.dual_zone:
-			return self.read_temp(self._REGISTER_TOBJ2)
-		else:
-			raise RuntimeError("Device only has one thermopile")
+		    return self.read_temp(self._REGISTER_TOBJ2)
+		raise RuntimeError("Device only has one thermopile")
 
 	@property
 	def ambient_temp(self):
