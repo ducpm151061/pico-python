@@ -1,4 +1,6 @@
 import math
+
+
 class KalmanFilter:
     _err_measure: float
     _err_estimate: float
@@ -11,16 +13,17 @@ class KalmanFilter:
         self.mea_e = mea_e
         self.est_e = est_e
         self.q = q
-        self._err_measure=0
-        self._err_estimate=0.1
-        self._q=0
-        self._current_estimate=0
-        self._last_estimate=0
-        self._kalman_gain=0
+        self._err_measure = 0
+        self._err_estimate = 0.1
+        self._q = 0
+        self._current_estimate = 0
+        self._last_estimate = 0
+        self._kalman_gain = 0
 
     def updateEstimate(self, mea):
 
-        _kalman_gain = self._err_estimate/(self._err_estimate + self._err_measure)
+        _kalman_gain = self._err_estimate / \
+            (self._err_estimate + self._err_measure)
         _current_estimate = self._last_estimate + \
             _kalman_gain * (mea - self._last_estimate)
         _err_estimate = (1.0 - _kalman_gain)*self._err_estimate + \

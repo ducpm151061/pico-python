@@ -1,4 +1,6 @@
 from machine import I2C
+
+
 class CCS811(object):
     """CCS811 gas sensor. Measures eCO2 in ppm and TVOC in ppb"""
 
@@ -13,7 +15,8 @@ class CCS811(object):
         # Check if sensor is vailable at i2c bus address
         devices = i2c.scan()
         if self.addr not in devices:
-            raise ValueError('CCS811 not found. Please check wiring. Pull nWake to ground.')
+            raise ValueError(
+                'CCS811 not found. Please check wiring. Pull nWake to ground.')
         # See figure 22 in datasheet: Bootloader Register Map
         # Check HW_ID register (0x20) - correct value 0x81
         hardware_id = self.i2c.readfrom_mem(self.addr, 0x20, 1)
@@ -52,20 +55,20 @@ class CCS811(object):
             return False
 
     def get_baseline(self):
-        register = self.i2c.readfrom_mem(self.addr,0x11,2)
+        register = self.i2c.readfrom_mem(self.addr, 0x11, 2)
         HB = register[0]
         LB = register[1]
         #baseline = (HB << 8) | LB
         return HB, LB
 
-    def put_baseline(self,HB,LB):
-        register = bytearray([0x00,0x00])
+    def put_baseline(self, HB, LB):
+        register = bytearray([0x00, 0x00])
         register[0] = HB
         register[1] = LB
-        self.i2c.writeto_mem(self.addr,0x11,register)
-    
-    def put_envdata(self,humidity,temp):
-        envregister = bytearray([0x00,0x00,0x00,0x00])
+        self.i2c.writeto_mem(self.addr, 0x11, register)
+
+    def put_envdata(self, humidity, temp):
+        envregister = bytearray([0x00, 0x00, 0x00, 0x00])
         envregister[0] = int(humidity) << 1
         t = int(temp//1)
         tf = temp % 1
@@ -74,5 +77,5 @@ class CCS811(object):
         t_comb = t_H | t_L
         envregister[2] = t_comb >> 8
         envregister[3] = t_comb & 0xFF
-        self.i2c.writeto_mem(self.addr,0x05,envregister)
-        #return envregister
+        self.i2c.writeto_mem(self.addr, 0x05, envregister)
+        # return envregister
