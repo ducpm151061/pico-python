@@ -154,5 +154,4 @@ class BMP085():
 
 
 class BMP180(BMP085):
-    def __init__(self, i2c=None):
-        super().__init__(i2c)
+    pass
