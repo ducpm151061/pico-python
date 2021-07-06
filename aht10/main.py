@@ -1,8 +1,8 @@
-from machine import Pin,I2C
+from machine import Pin, I2C
 import time
 from aht10 import AHT10
-i2c = I2C(id=0,scl=Pin(9),sda=Pin(8),freq=400000)
-aht10=AHT10(i2c=i2c)
+i2c = I2C(id=0, scl=Pin(9), sda=Pin(8), freq=400000)
+aht10 = AHT10(i2c=i2c)
 led = Pin(25, Pin.OUT)
 
 while True:
