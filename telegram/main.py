@@ -17,7 +17,8 @@ chat_id = '1187155703'
 
 
 def send_message(chat_id, message):
-    url_req = "https://api.telegram.org/bot" + bot_token + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + message
+    url_req = "https://api.telegram.org/bot" + bot_token + \
+        "/sendMessage" + "?chat_id=" + chat_id + "&text=" + message
     results = urequests.get(url_req)
     print(results.json())
     results.close()
